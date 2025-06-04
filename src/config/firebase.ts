@@ -1,8 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB1jAp33XVhH1Q7pWvjpRyGqPCDcf3u2R0",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "employee-manager-daa1a.firebaseapp.com",
   projectId: "employee-manager-daa1a",
   storageBucket: "employee-manager-daa1a.firebasestorage.app",
@@ -11,5 +13,8 @@ const firebaseConfig = {
   measurementId: "G-P2BRRPYX6V"
 };
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+export const app = initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
