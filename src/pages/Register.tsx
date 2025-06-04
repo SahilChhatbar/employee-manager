@@ -74,19 +74,19 @@ const Register = () => {
           </CardTitle>
           <CardDescription>
             Or
-            <Link to="/" className="font-medium text-primary hover:underline">
+            <Link to="/" className="ml-1 font-medium text-primary hover:underline">
               sign in to your existing account
             </Link>
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <Label>Full Name</Label>
+            <Label className="flex flex-col items-start">Full Name
             <Input
               id="name"
               name="name"
@@ -96,8 +96,9 @@ const Register = () => {
               placeholder="Enter your full name"
               value={formData.name}
               onChange={handleChange}
-            />
-            <Label>Employee ID</Label>
+            /></Label>
+           <Label className="flex flex-col items-start">Full Name
+            Employee ID  
             <Input
               id="empID"
               name="empID"
@@ -106,8 +107,9 @@ const Register = () => {
               placeholder="Enter your employee ID"
               value={formData.empID}
               onChange={handleChange}
-            />
-            <Label>Email Address</Label>
+            /></Label>
+           <Label className="flex flex-col items-start">Full Name
+           Email Address
             <Input
               id="email"
               name="email"
@@ -117,8 +119,9 @@ const Register = () => {
               placeholder="Enter your email address"
               value={formData.email}
               onChange={handleChange}
-            />
-            <Label>Password</Label>
+            /></Label>
+            <Label className="flex flex-col items-start">Full Name
+           Password
             <Input
               id="password"
               name="password"
@@ -128,8 +131,9 @@ const Register = () => {
               placeholder="Create a password (min. 6 characters)"
               value={formData.password}
               onChange={handleChange}
-            />
-            <Label>Confirm Password</Label>
+            /></Label>
+            <Label className="flex flex-col items-start">Full Name
+           Confirm Password
             <Input
               id="confirmPassword"
               name="confirmPassword"
@@ -139,7 +143,7 @@ const Register = () => {
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={handleChange}
-            />
+            /></Label>
             <Button type="submit" disabled={loading} className="w-full">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Creating account..." : "Create Account"}

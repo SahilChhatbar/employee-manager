@@ -3,6 +3,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -109,6 +112,74 @@ export const authService = {
 
   getCurrentUser(): User | null {
     return auth.currentUser;
+  },
+   async updateEmployee(
+    uid: string,
+    data: { name?: string; email?: string; empID?: string }
+  ): Promise<Employee> {
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("No authenticated user");
+
+      if (data.empID) {
+        const empIDExists = await this.checkEmpIDExists(data.empID);
+        if (empIDExists) throw new Error("Employee ID already exists");
+      }
+
+      const employeeRef = doc(db, "employees", uid);
+      const employeeDoc = await getDoc(employeeRef);
+
+      if (!employeeDoc.exists()) {
+        throw new Error("Employee not found");
+      }
+
+      const updatedEmployee = {
+        ...employeeDoc.data(),
+        ...data,
+      };
+
+      await setDoc(employeeRef, updatedEmployee, { merge: true });
+
+      if (data.name) {
+        await updateProfile(user, {
+          displayName: data.name,
+        });
+      }
+
+      return updatedEmployee as Employee;
+    } catch (error: any) {
+      throw new Error(error.message || "Update failed");
+    }
+  },
+
+  async deleteEmployee(password: string): Promise<void> {
+    try {
+      const user = auth.currentUser;
+      if (!user || !user.email) throw new Error("No authenticated user");
+
+    const credential = EmailAuthProvider.credential(user.email, password);
+      await reauthenticateWithCredential(user, credential);
+
+      await import("firebase/firestore").then(({ deleteDoc }) =>
+        deleteDoc(doc(db, "employees", user.uid))
+      );
+      await deleteUser(user);
+    } catch (error: any) {
+      throw new Error(error.message || "Delete failed");
+    }
+  },
+   async getAllEmployees(): Promise<Employee[]> {
+    try {
+        
+      const employeesSnapshot = await import("firebase/firestore").then(
+        ({ collection, getDocs }) => getDocs(collection(db, "employees"))
+      );
+
+      return employeesSnapshot.docs.map(doc => doc.data() as Employee);
+    } catch (error: any) {
+      console.error("Error fetching employees:", error);
+      throw new Error(error.message || "Failed to fetch employees");
+    }
   },
 };
 
