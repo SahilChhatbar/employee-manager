@@ -3,6 +3,7 @@ import App from './App';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -13,9 +14,10 @@ const router = createBrowserRouter([
       { path: 'register', element: <Register /> },
       {
         path: 'dashboard',
-        element: (
-            <Dashboard />
-         ),
+        element: <ProtectedRoute />,
+        children: [
+          { index: true, element: <Dashboard /> }
+        ]
       },
     ],
   },
