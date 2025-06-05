@@ -43,6 +43,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    
     if (formData.password !== confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
@@ -86,64 +87,70 @@ const Register = () => {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <Label className="flex flex-col items-start">Full Name
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              required
-              placeholder="Enter your full name"
-              value={formData.name}
-              onChange={handleChange}
-            /></Label>
-           <Label className="flex flex-col items-start">Full Name
-            Employee ID  
-            <Input
-              id="empID"
-              name="empID"
-              type="text"
-              required
-              placeholder="Enter your employee ID"
-              value={formData.empID}
-              onChange={handleChange}
-            /></Label>
-           <Label className="flex flex-col items-start">Full Name
-           Email Address
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              placeholder="Enter your email address"
-              value={formData.email}
-              onChange={handleChange}
-            /></Label>
-            <Label className="flex flex-col items-start">Full Name
-           Password
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              placeholder="Create a password (min. 6 characters)"
-              value={formData.password}
-              onChange={handleChange}
-            /></Label>
-            <Label className="flex flex-col items-start">Full Name
-           Confirm Password
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={handleChange}
-            /></Label>
+            <Label className="flex flex-col items-start">
+              Full Name
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                required
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </Label>
+            <Label className="flex flex-col items-start">
+              Employee ID  
+              <Input
+                id="empID"
+                name="empID"
+                type="text"
+                required
+                placeholder="Enter your employee ID"
+                value={formData.empID}
+                onChange={handleChange}
+              />
+            </Label>
+            <Label className="flex flex-col items-start">
+              Email Address
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                placeholder="Enter your email address"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </Label>
+            <Label className="flex flex-col items-start">
+              Password
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                placeholder="Create a password (min. 6 characters)"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </Label>
+            <Label className="flex flex-col items-start">
+              Confirm Password
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                required
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={handleChange}
+              />
+            </Label>
             <Button type="submit" disabled={loading} className="w-full">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Creating account..." : "Create Account"}

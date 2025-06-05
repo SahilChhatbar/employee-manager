@@ -42,9 +42,7 @@ const Login = () => {
       navigate("/dashboard");
     } catch (error: any) {
       setError(error.message);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (
