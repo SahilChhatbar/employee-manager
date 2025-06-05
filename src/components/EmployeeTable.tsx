@@ -50,7 +50,6 @@ export function EmployeeTable() {
                 <TableHead>Name</TableHead>
                 <TableHead>Employee ID</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Joined</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

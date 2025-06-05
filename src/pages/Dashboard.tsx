@@ -270,8 +270,7 @@ const Dashboard = () => {
                   <Label htmlFor="delete-password">
                     Confirm with your password
                   </Label>
-                  <div className="relative">
-                    <Input
+                   <Input
                       id="delete-password"
                       type={showPassword ? "text" : "password"}
                       value={deletePassword}
@@ -291,7 +290,6 @@ const Dashboard = () => {
                         <Eye className="h-4 w-4" />
                       )}
                     </Button>
-                  </div>
                 </div>
                 <AlertDialogFooter>
                   <AlertDialogCancel onClick={resetDeleteForm}>

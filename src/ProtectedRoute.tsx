@@ -25,7 +25,6 @@ const ProtectedRoute = () => {
       </div>
     );
   }
-
   return user ? <Outlet /> : <Navigate to="/" replace />;
 };
 
