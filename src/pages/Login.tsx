@@ -36,12 +36,12 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
       await authService.loginEmployee(formData);
       navigate("/dashboard");
     } catch (error: any) {
       setError(error.message);
+      setLoading(false);
     } 
   };
 

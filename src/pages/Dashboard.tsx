@@ -31,13 +31,12 @@ import {
   Loader2,
   User,
   Mail,
-  CreditCard,
   Edit,
   Trash2,
   Eye,
   EyeOff,
+  IdCard,
 } from "lucide-react";
-import { toast } from "sonner";
 import type { Employee } from "../types/index";
 import { EmployeeTable } from "@/components/EmployeeTable";
 
@@ -88,9 +87,9 @@ const Dashboard = () => {
       });
       setEmployee(updatedEmployee);
       setIsUpdateDialogOpen(false);
-      toast.success("Profile updated successfully!");
+      console.log("Profile updated successfully!");
     } catch (err: any) {
-      toast.error(err.message || "Failed to update profile");
+      console.log(err.message || "Failed to update profile");
     } finally {
       setUpdating(false);
     }
@@ -98,15 +97,15 @@ const Dashboard = () => {
 
   const handleDeleteAccount = async () => {
     if (!deletePassword.trim()) {
-      toast.error("Please enter your password");
+    {  ("Please enter your password");}
       return;
     }
     setDeleting(true);
     try {
       await authService.deleteEmployee(deletePassword);
-      toast.success("Account deleted successfully");
+      {("Account deleted successfully");}
     } catch (err: any) {
-      toast.error(err.message || "Failed to delete account");
+      (err.message || "Failed to delete account");
       setDeleting(false);
     }
   };
@@ -133,6 +132,7 @@ const Dashboard = () => {
         <Button onClick={() => signOut(auth)} variant="outline">
           Return to Login
         </Button>
+        <button className="text-red-400 text-3xl"></button>
       </div>
     );
   }
@@ -205,7 +205,7 @@ const Dashboard = () => {
                   />
                 </Label>
                 <Label className="flex flex-col items-start">
-                  Email Address Employee ID
+                  Employee ID
                   <Input
                     id="update-empid"
                     value={updateForm.empID}
@@ -310,7 +310,7 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center gap-3">
             <span className="flex flex-row items-center gap-1">
-              <CreditCard className="h-5 w-5 text-muted-foreground" />
+              <IdCard className="h-5 w-5 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">Employee ID</p>
             </span>
             <Badge variant="secondary" className="font-mono">
