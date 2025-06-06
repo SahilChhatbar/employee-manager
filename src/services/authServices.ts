@@ -3,6 +3,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  updateEmail,
   deleteUser,
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -54,7 +55,7 @@ export const authService = {
         data.email,
         data.password
       );
-      
+
       const user = userCredential.user;
       const employeeDoc = await getDoc(doc(db, "employees", user.uid));
 
@@ -113,7 +114,7 @@ export const authService = {
   getCurrentUser(): User | null {
     return auth.currentUser;
   },
-   async updateEmployee(
+  async updateEmployee(
     uid: string,
     data: { name?: string; email?: string; empID?: string }
   ): Promise<Employee> {
@@ -133,18 +134,32 @@ export const authService = {
         throw new Error("Employee not found");
       }
 
-      const updatedEmployee = {
-        ...employeeDoc.data(),
-        ...data,
-      };
+      const currentEmployee = employeeDoc.data() as Employee;
 
-      await setDoc(employeeRef, updatedEmployee, { merge: true });
+      if (data.email && data.email !== currentEmployee.email) {
+        try {
+          await updateEmail(user, data.email);
+        } catch (error: any) {
+          if (error.code === "auth/requires-recent-login") {
+            throw new Error(
+              "Please log out and log back in before updating your email address"
+            );
+          }
+          throw error;
+        }
+      }
 
       if (data.name) {
         await updateProfile(user, {
           displayName: data.name,
         });
       }
+      const updatedEmployee = {
+        ...currentEmployee,
+        ...data,
+      };
+
+      await setDoc(employeeRef, updatedEmployee, { merge: true });
 
       return updatedEmployee as Employee;
     } catch (error: any) {
@@ -157,7 +172,7 @@ export const authService = {
       const user = auth.currentUser;
       if (!user || !user.email) throw new Error("No authenticated user");
 
-    const credential = EmailAuthProvider.credential(user.email, password);
+      const credential = EmailAuthProvider.credential(user.email, password);
       await reauthenticateWithCredential(user, credential);
 
       await import("firebase/firestore").then(({ deleteDoc }) =>
@@ -168,20 +183,18 @@ export const authService = {
       throw new Error(error.message || "Delete failed");
     }
   },
-   async getAllEmployees(): Promise<Employee[]> {
+  async getAllEmployees(): Promise<Employee[]> {
     try {
-        
       const employeesSnapshot = await import("firebase/firestore").then(
         ({ collection, getDocs }) => getDocs(collection(db, "employees"))
       );
 
-      return employeesSnapshot.docs.map(doc => doc.data() as Employee);
+      return employeesSnapshot.docs.map((doc) => doc.data() as Employee);
     } catch (error: any) {
       console.error("Error fetching employees:", error);
       throw new Error(error.message || "Failed to fetch employees");
     }
   },
-  
 };
 
 export default authService;
