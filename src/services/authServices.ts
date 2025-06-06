@@ -3,13 +3,21 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
-  updateEmail,
   deleteUser,
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import type { LoginData, RegisterData, Employee } from "@/types/index";
 
@@ -22,6 +30,7 @@ export const authService = {
       if (empIDExists) {
         throw new Error("Employee ID already exists");
       }
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
@@ -32,6 +41,7 @@ export const authService = {
       await updateProfile(user, {
         displayName: data.name,
       });
+
       const employee: Employee = {
         uid: user.uid,
         name: data.name,
@@ -39,6 +49,7 @@ export const authService = {
         empID: data.empID,
         createdAt: new Date(),
       };
+
       await setDoc(doc(db, "employees", user.uid), employee);
       return { user, employee };
     } catch (error: any) {
@@ -64,7 +75,6 @@ export const authService = {
       }
 
       const employee = employeeDoc.data() as Employee;
-
       return { user, employee };
     } catch (error: any) {
       throw new Error(error.message || "Login failed");
@@ -81,13 +91,9 @@ export const authService = {
 
   async checkEmpIDExists(empID: string): Promise<boolean> {
     try {
-      const employeesSnapshot = await import("firebase/firestore").then(
-        ({ collection, query, where, getDocs }) =>
-          getDocs(
-            query(collection(db, "employees"), where("empID", "==", empID))
-          )
+      const employeesSnapshot = await getDocs(
+        query(collection(db, "employees"), where("empID", "==", empID))
       );
-
       return !employeesSnapshot.empty;
     } catch (error) {
       console.error("Error checking empID:", error);
@@ -101,7 +107,6 @@ export const authService = {
       if (!user) return null;
 
       const employeeDoc = await getDoc(doc(db, "employees", user.uid));
-
       if (!employeeDoc.exists()) return null;
 
       return employeeDoc.data() as Employee;
@@ -114,19 +119,22 @@ export const authService = {
   getCurrentUser(): User | null {
     return auth.currentUser;
   },
+
   async updateEmployee(
     uid: string,
-    data: { name?: string; email?: string; empID?: string }
+    data: { name?: string; empID?: string }
   ): Promise<Employee> {
     try {
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
 
       if (data.empID) {
-        const empIDExists = await this.checkEmpIDExists(data.empID);
-        if (empIDExists) throw new Error("Employee ID already exists");
+        const currentEmployee = await this.getCurrentEmployee();
+        if (currentEmployee && currentEmployee.empID !== data.empID) {
+          const empIDExists = await this.checkEmpIDExists(data.empID);
+          if (empIDExists) throw new Error("Employee ID already exists");
+        }
       }
-
       const employeeRef = doc(db, "employees", uid);
       const employeeDoc = await getDoc(employeeRef);
 
@@ -134,32 +142,16 @@ export const authService = {
         throw new Error("Employee not found");
       }
 
-      const currentEmployee = employeeDoc.data() as Employee;
-
-      if (data.email && data.email !== currentEmployee.email) {
-        try {
-          await updateEmail(user, data.email);
-        } catch (error: any) {
-          if (error.code === "auth/requires-recent-login") {
-            throw new Error(
-              "Please log out and log back in before updating your email address"
-            );
-          }
-          throw error;
-        }
-      }
-
+      const updatedEmployee = {
+        ...employeeDoc.data(),
+        ...data,
+      };
+      await setDoc(employeeRef, updatedEmployee, { merge: true });
       if (data.name) {
         await updateProfile(user, {
           displayName: data.name,
         });
       }
-      const updatedEmployee = {
-        ...currentEmployee,
-        ...data,
-      };
-
-      await setDoc(employeeRef, updatedEmployee, { merge: true });
 
       return updatedEmployee as Employee;
     } catch (error: any) {
@@ -171,24 +163,18 @@ export const authService = {
     try {
       const user = auth.currentUser;
       if (!user || !user.email) throw new Error("No authenticated user");
-
       const credential = EmailAuthProvider.credential(user.email, password);
       await reauthenticateWithCredential(user, credential);
-
-      await import("firebase/firestore").then(({ deleteDoc }) =>
-        deleteDoc(doc(db, "employees", user.uid))
-      );
+      await deleteDoc(doc(db, "employees", user.uid));
       await deleteUser(user);
     } catch (error: any) {
       throw new Error(error.message || "Delete failed");
     }
   },
+
   async getAllEmployees(): Promise<Employee[]> {
     try {
-      const employeesSnapshot = await import("firebase/firestore").then(
-        ({ collection, getDocs }) => getDocs(collection(db, "employees"))
-      );
-
+      const employeesSnapshot = await getDocs(collection(db, "employees"));
       return employeesSnapshot.docs.map((doc) => doc.data() as Employee);
     } catch (error: any) {
       console.error("Error fetching employees:", error);

@@ -43,7 +43,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    
+
     if (formData.password !== confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
@@ -75,7 +75,10 @@ const Register = () => {
           </CardTitle>
           <CardDescription>
             Or
-            <Link to="/" className="ml-1 font-medium text-primary hover:underline">
+            <Link
+              to="/"
+              className="ml-1 font-medium text-primary hover:underline"
+            >
               sign in to your existing account
             </Link>
           </CardDescription>
@@ -90,7 +93,6 @@ const Register = () => {
             <Label className="flex flex-col items-start">
               Full Name
               <Input
-                id="name"
                 name="name"
                 type="text"
                 autoComplete="name"
@@ -101,9 +103,8 @@ const Register = () => {
               />
             </Label>
             <Label className="flex flex-col items-start">
-              Employee ID  
+              Employee ID
               <Input
-                id="empID"
                 name="empID"
                 type="text"
                 required
@@ -115,7 +116,6 @@ const Register = () => {
             <Label className="flex flex-col items-start">
               Email Address
               <Input
-                id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
@@ -128,7 +128,6 @@ const Register = () => {
             <Label className="flex flex-col items-start">
               Password
               <Input
-                id="password"
                 name="password"
                 type="password"
                 autoComplete="new-password"
@@ -141,7 +140,6 @@ const Register = () => {
             <Label className="flex flex-col items-start">
               Confirm Password
               <Input
-                id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 autoComplete="new-password"

@@ -51,7 +51,6 @@ const Dashboard = () => {
   const [deletePassword, setDeletePassword] = useState("");
   const [updateForm, setUpdateForm] = useState({
     name: "",
-    email: "",
     empID: "",
   });
 
@@ -63,7 +62,6 @@ const Dashboard = () => {
           setEmployee(currentEmployee);
           setUpdateForm({
             name: currentEmployee.name,
-            email: currentEmployee.email,
             empID: currentEmployee.empID,
           });
         } else {
@@ -82,14 +80,12 @@ const Dashboard = () => {
     try {
       const updatedEmployee = await authService.updateEmployee(employee.uid, {
         name: updateForm.name,
-        email: updateForm.email,
         empID: updateForm.empID,
       });
       setEmployee(updatedEmployee);
       setIsUpdateDialogOpen(false);
-      console.log("Profile updated successfully!");
     } catch (err: any) {
-      console.log(err.message || "Failed to update profile");
+      console.error(err.message || "Failed to update profile");
     } finally {
       setUpdating(false);
     }
@@ -97,15 +93,13 @@ const Dashboard = () => {
 
   const handleDeleteAccount = async () => {
     if (!deletePassword.trim()) {
-    {  ("Please enter your password");}
       return;
     }
     setDeleting(true);
     try {
       await authService.deleteEmployee(deletePassword);
-      {("Account deleted successfully");}
     } catch (err: any) {
-      (err.message || "Failed to delete account");
+      console.error(err.message || "Failed to delete account");
       setDeleting(false);
     }
   };
@@ -114,7 +108,6 @@ const Dashboard = () => {
     if (employee) {
       setUpdateForm({
         name: employee.name,
-        email: employee.email,
         empID: employee.empID,
       });
     }
@@ -128,11 +121,12 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <p className="text-red-600 mb-4">{error}</p>
-        <Button onClick={() => signOut(auth)} variant="outline">
-          Return to Login
-        </Button>
-        <button className="text-red-400 text-3xl"></button>
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button onClick={() => signOut(auth)} variant="outline">
+            Return to Login
+          </Button>
+        </div>
       </div>
     );
   }
@@ -140,7 +134,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background p-4 max-w-4xl mx-auto">
       <div className="flex flex-col justify-between items-start gap-4 pb-4">
-        <div className="flex flex-row justify-between items-center w-full pb">
+        <div className="flex flex-row justify-between items-center w-full">
           <h1 className="text-3xl font-bold">Employee Dashboard</h1>
           <Button
             onClick={() => signOut(auth)}
@@ -178,7 +172,6 @@ const Dashboard = () => {
                 <Label className="flex flex-col items-start">
                   Full Name
                   <Input
-                    id="update-name"
                     value={updateForm.name}
                     onChange={(e) =>
                       setUpdateForm((prev) => ({
@@ -190,24 +183,8 @@ const Dashboard = () => {
                   />
                 </Label>
                 <Label className="flex flex-col items-start">
-                  Email Address
-                  <Input
-                    id="update-email"
-                    type="email"
-                    value={updateForm.email}
-                    onChange={(e) =>
-                      setUpdateForm((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
-                    }
-                    placeholder="Enter your email address"
-                  />
-                </Label>
-                <Label className="flex flex-col items-start">
                   Employee ID
                   <Input
-                    id="update-empid"
                     value={updateForm.empID}
                     onChange={(e) =>
                       setUpdateForm((prev) => ({
@@ -271,7 +248,7 @@ const Dashboard = () => {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-5 top-5 mt-29 px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (

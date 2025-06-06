@@ -36,13 +36,15 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
       await authService.loginEmployee(formData);
       navigate("/dashboard");
     } catch (error: any) {
       setError(error.message);
+    } finally {
       setLoading(false);
-    } 
+    }
   };
 
   return (
@@ -70,7 +72,6 @@ const Login = () => {
             <Label className="flex flex-col items-start">
               Email address
               <Input
-                id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
@@ -83,7 +84,6 @@ const Login = () => {
             <Label className="flex flex-col items-start">
               Password
               <Input
-                id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
